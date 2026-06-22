@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI求职智能匹配平台</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- 侧边栏导航 -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#6366F1"/>
+            <path d="M8 22L16 6L24 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 17H21" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="logo-text">智聘 AI</span>
+      </div>
+      <p class="logo-subtitle">AI求职智能匹配平台</p>
+    </div>
+
+    <nav class="nav-menu">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>工作台</span>
+      </a>
+      <a href="#" class="nav-item" data-page="profile">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>个人信息</span>
+      </a>
+      <a href="#" class="nav-item" data-page="matching">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <span>智能匹配</span>
+      </a>
+      <a href="#" class="nav-item" data-page="resume">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>简历分析</span>
+      </a>
+      <a href="#" class="nav-item" data-page="optimize">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <span>简历优化</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="profile-mini">
+        <div class="avatar">S</div>
+        <div class="profile-info">
+          <span class="name" id="sidebarUserName">未登录</span>
+          <span class="role">求职者</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 主内容区域 -->
+  <main class="main-content">
+    <!-- 顶部栏 -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1 class="page-title" id="pageTitle">工作台</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="match-badge" id="topMatchBadge" style="display:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span id="topMatchScore">--</span> 分匹配
+        </div>
+      </div>
+    </header>
+
+    <!-- 页面内容容器 -->
+    <div class="page-container">
+
+      <!-- ==================== 工作台页面 ==================== -->
+      <section class="page active" id="page-dashboard">
+        <div class="welcome-banner">
+          <div class="welcome-text">
+            <h2>欢迎回来！</h2>
+            <p>使用 AI 智能匹配，找到最适合你的工作机会</p>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="navigateTo('profile')">
+            开始匹配
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #EEF2FF; color: #6366F1;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value" id="statJobCount">0</span>
+              <span class="stat-label">匹配岗位数</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #FEF3C7; color: #F59E0B;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value" id="statAvgMatch">--</span>
+              <span class="stat-label">平均匹配度</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #ECFDF5; color: #10B981;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value" id="statResumeScore">--</span>
+              <span class="stat-label">简历评分</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #FCE7F3; color: #EC4899;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value" id="statSuggestions">--</span>
+              <span class="stat-label">优化建议</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="dashboard-charts">
+          <div class="chart-card">
+            <h3>岗位匹配度分布</h3>
+            <div class="chart-wrapper">
+              <canvas id="matchDistChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>技能雷达图</h3>
+            <div class="chart-wrapper">
+              <canvas id="skillRadarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快速操作 -->
+        <div class="quick-actions">
+          <h3>快速开始</h3>
+          <div class="action-cards">
+            <div class="action-card" onclick="navigateTo('profile')">
+              <div class="action-icon" style="background: linear-gradient(135deg, #6366F1, #8B5CF6);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <h4>完善个人信息</h4>
+              <p>填写教育背景、技能特长，让AI更精准地了解你</p>
+            </div>
+            <div class="action-card" onclick="navigateTo('matching')">
+              <div class="action-icon" style="background: linear-gradient(135deg, #F59E0B, #EF4444);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              </div>
+              <h4>智能岗位匹配</h4>
+              <p>AI根据你的背景，智能推荐最适合的工作机会</p>
+            </div>
+            <div class="action-card" onclick="navigateTo('resume')">
+              <div class="action-icon" style="background: linear-gradient(135deg, #10B981, #06B6D4);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <h4>简历分析</h4>
+              <p>上传简历，AI分析你与目标岗位的匹配程度</p>
+            </div>
+            <div class="action-card" onclick="navigateTo('optimize')">
+              <div class="action-icon" style="background: linear-gradient(135deg, #EC4899, #F43F5E);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </div>
+              <h4>简历优化</h4>
+              <p>获取AI生成的简历优化建议，提升初筛通过率</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 个人信息页面 ==================== -->
+      <section class="page" id="page-profile">
+        <div class="section-header">
+          <h2>个人信息</h2>
+          <p class="section-desc">完善你的个人信息，让AI更精准地为你匹配合适的岗位</p>
+        </div>
+
+        <form id="profileForm" class="profile-form">
+          <!-- 基本信息 -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              基本信息
+            </h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>姓名</label>
+                <input type="text" id="userName" placeholder="请输入你的姓名" required>
+              </div>
+              <div class="form-group">
+                <label>学历</label>
+                <select id="userEducation" required>
+                  <option value="">请选择</option>
+                  <option value="大专">大专</option>
+                  <option value="本科">本科</option>
+                  <option value="硕士">硕士</option>
+                  <option value="博士">博士</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>毕业院校</label>
+                <input type="text" id="userSchool" placeholder="请输入毕业院校">
+              </div>
+              <div class="form-group">
+                <label>专业</label>
+                <input type="text" id="userMajor" placeholder="请输入专业名称">
+              </div>
+              <div class="form-group">
+                <label>毕业年份</label>
+                <select id="userGradYear" required>
+                  <option value="">请选择</option>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>求职意向城市</label>
+                <input type="text" id="userCity" placeholder="如：北京、上海、深圳">
+              </div>
+            </div>
+          </div>
+
+          <!-- 专业技能 -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              专业技能
+            </h3>
+            <div class="form-group full-width">
+              <label>掌握的技能（点击选择或自定义输入）</label>
+              <div class="skill-tags-input" id="skillTagsInput">
+                <div class="skill-tags" id="userSkills"></div>
+                <input type="text" id="skillInput" placeholder="输入技能后按回车添加...">
+              </div>
+              <div class="skill-suggestions" id="skillSuggestions">
+                <!-- 动态生成 -->
+              </div>
+            </div>
+            <div class="form-group full-width">
+              <label>技能熟练度</label>
+              <div id="skillProficiency" class="skill-proficiency-list">
+                <!-- 动态生成 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 实习/项目经验 -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              实习/项目经验
+            </h3>
+            <div id="experienceList" class="experience-list">
+              <!-- 动态生成 -->
+            </div>
+            <button type="button" class="btn btn-outline" id="addExperienceBtn" onclick="addExperience()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              添加经验
+            </button>
+          </div>
+
+          <!-- 职业兴趣 -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              职业兴趣
+            </h3>
+            <div class="form-group full-width">
+              <label>感兴趣的岗位方向</label>
+              <div class="interest-tags" id="interestTags">
+                <label class="tag-option"><input type="checkbox" name="interest" value="前端开发"> <span>前端开发</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="后端开发"> <span>后端开发</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="全栈开发"> <span>全栈开发</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="移动开发"> <span>移动开发</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="数据分析"> <span>数据分析</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="人工智能"> <span>人工智能</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="产品经理"> <span>产品经理</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="UI设计"> <span>UI设计</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="测试工程师"> <span>测试工程师</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="运维工程师"> <span>运维工程师</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="算法工程师"> <span>算法工程师</span></label>
+                <label class="tag-option"><input type="checkbox" name="interest" value="数据工程"> <span>数据工程</span></label>
+              </div>
+            </div>
+            <div class="form-group full-width">
+              <label>期望薪资范围（月薪/元）</label>
+              <div class="salary-range">
+                <input type="number" id="salaryMin" placeholder="最低" min="0">
+                <span class="salary-separator">-</span>
+                <input type="number" id="salaryMax" placeholder="最高" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- 自我介绍 -->
+          <div class="form-section">
+            <h3 class="form-section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              自我介绍
+            </h3>
+            <div class="form-group full-width">
+              <textarea id="userBio" rows="4" placeholder="简要介绍你的背景、优势、求职意向等，帮助AI更好地了解你..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              保存并开始匹配
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ==================== 智能匹配页面 ==================== -->
+      <section class="page" id="page-matching">
+        <div class="section-header">
+          <h2>智能岗位匹配</h2>
+          <p class="section-desc">AI根据你的教育背景、专业技能、职业兴趣，为你推荐最匹配的工作机会</p>
+        </div>
+
+        <!-- 匹配控制栏 -->
+        <div class="matching-controls">
+          <div class="control-group">
+            <label>岗位方向</label>
+            <select id="matchDirection">
+              <option value="all">全部方向</option>
+              <option value="前端开发">前端开发</option>
+              <option value="后端开发">后端开发</option>
+              <option value="全栈开发">全栈开发</option>
+              <option value="数据分析">数据分析</option>
+              <option value="人工智能">人工智能</option>
+              <option value="产品经理">产品经理</option>
+              <option value="算法工程师">算法工程师</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>最低匹配度</label>
+            <select id="matchThreshold">
+              <option value="0">全部</option>
+              <option value="50">50%以上</option>
+              <option value="60">60%以上</option>
+              <option value="70">70%以上</option>
+              <option value="80">80%以上</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="startMatchBtn" onclick="startMatching()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            开始匹配
+          </button>
+        </div>
+
+        <!-- 匹配结果 -->
+        <div id="matchingResult" class="matching-result">
+          <div class="empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <h3>请先完善个人信息</h3>
+            <p>完善个人信息后，AI将为你智能匹配最合适的岗位</p>
+            <button class="btn btn-outline" onclick="navigateTo('profile')">去完善信息</button>
+          </div>
+        </div>
+
+        <!-- 匹配详情弹窗 -->
+        <div class="modal-overlay" id="jobDetailModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h3 id="modalJobTitle">--</h3>
+              <button class="modal-close" onclick="closeModal('jobDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="modalJobBody">
+              <!-- 动态填充 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 简历分析页面 ==================== -->
+      <section class="page" id="page-resume">
+        <div class="section-header">
+          <h2>简历匹配度分析</h2>
+          <p class="section-desc">上传你的简历内容，AI将分析你与目标岗位的匹配程度</p>
+        </div>
+
+        <div class="resume-layout">
+          <!-- 左侧：简历输入 -->
+          <div class="resume-input-panel">
+            <div class="panel-card">
+              <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                简历内容
+              </h3>
+              <textarea id="resumeContent" rows="20" placeholder="请粘贴你的简历内容，或手动输入...
+
+建议包含以下信息：
+- 个人基本信息（姓名、学历、毕业院校、专业）
+- 专业技能和熟练程度
+- 实习/项目经验
+- 获奖情况
+- 自我评价"></textarea>
+              <div class="resume-actions">
+                <button class="btn btn-primary" onclick="analyzeResume()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  分析简历
+                </button>
+                <button class="btn btn-outline" onclick="loadSampleResume()">加载示例简历</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：分析结果 -->
+          <div class="resume-result-panel">
+            <div class="panel-card">
+              <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                分析结果
+              </h3>
+              <div id="resumeAnalysisResult" class="resume-analysis-result">
+                <div class="empty-state-sm">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <p>请输入简历内容后点击"分析简历"</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 简历优化页面 ==================== -->
+      <section class="page" id="page-optimize">
+        <div class="section-header">
+          <h2>简历优化建议</h2>
+          <p class="section-desc">基于你的简历与目标岗位的匹配分析，AI生成针对性的优化方案</p>
+        </div>
+
+        <!-- 目标岗位选择 -->
+        <div class="optimize-target">
+          <div class="panel-card">
+            <h3>选择目标岗位</h3>
+            <p>选择你想申请的岗位，AI将针对该岗位生成简历优化建议</p>
+            <select id="optimizeJobSelect" class="optimize-job-select">
+              <option value="">请先进行岗位匹配</option>
+            </select>
+            <button class="btn btn-primary" id="generateOptBtn" onclick="generateOptimization()" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              生成优化建议
+            </button>
+          </div>
+        </div>
+
+        <!-- 优化建议结果 -->
+        <div id="optimizeResult" class="optimize-result">
+          <div class="empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <h3>请选择目标岗位</h3>
+            <p>选择目标岗位后，AI将为你生成个性化的简历优化建议</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Toast 通知 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 加载遮罩 -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p id="loadingText">AI正在分析中...</p>
+    </div>
+  </div>
+
+  <script src="js/data/jobs.js"></script>
+  <script src="js/data/skills.js"></script>
+  <script src="js/matching-engine.js"></script>
+  <script src="js/resume-analyzer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
